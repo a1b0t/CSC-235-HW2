@@ -1,0 +1,258 @@
+<html>
+   <head>
+      <style>
+         h1{
+         text-align: center;
+         }
+         .diceContainer{ 
+         display: flex;
+         justify-content: center;
+         padding-top: 25px;
+         }
+         .diceImage{
+         padding-top: 5px;
+         padding-right: 5px;
+         padding-bottom: 5px;
+         padding-left: 5px;
+         }
+         input[type=text] {
+         width: 40px;
+         background-color: #aeb0f2;
+         border: hidden;
+         }
+         .table {
+         display: flex;
+         justify-content: center;
+         padding-top: 75px;
+         }
+         .rollButton {
+         width: 50px;
+         height: 30px;
+         background-color: #5804ba;
+         color: #f1dde8;
+         }
+         .body {
+         background-color: #efefef;
+         }
+         .rollCol,.newGameCol{
+         padding-left: 300px;
+         padding-right: 50px;
+         display: flex;
+         justify-content: center;
+         }
+         .newGameButton{
+         width: 90px;
+         height: 30px;
+         background-color: #afbfc0;
+         color: #515d87;
+         }
+      </style>
+	  
+	  <script language="JavaScript">
+		
+		var dice = new Array(0,0,0,0,0);
+		var diceState = new Array(false,false,false,false,false);
+		var frequency = new Array(0,0,0,0,0,0);
+		var rollCount = 0;
+		
+		function roll()
+		{
+			if(rollCount <3)
+			{
+				rollCount++;
+				
+				frequency[0]=frequency[1]=frequency[2]=frequency[3]=frequency[4]=frequency[5]=0;
+			
+				for(var i=0;i<5;i++)
+				{
+					var d = document.getElementById("dice"+i);
+					
+					if(!diceState[d.id.at(-1)])
+					{
+						var v = Math.floor(Math.random() * 6) + 1;
+						d.src="pix/dice"+v+".gif";
+						dice[i] = v;
+					}
+					
+					frequency[dice[i]-1]++;
+				}
+				
+			}
+				console.log(diceState); //testing purposes 
+				console.log(dice); 
+				console.log(frequency);
+		}
+		
+		function block(element)
+		{
+			var diceValue = element.src.at(-5); //using src string from the clicked element to determine dice value
+			 
+			if(diceState[element.id.at(-1)])
+			{
+				element.src = "pix/dice" + diceValue + ".gif";
+				diceState[element.id.at(-1)] = false;
+			}
+			else
+			{
+				element.src = "pix/diceX" + diceValue + ".gif";
+				diceState[element.id.at(-1)] = true;
+			}
+			
+			console.log(diceState); //testing purposes 
+			console.log(dice); 
+		}
+		
+		function score(element)
+		{
+			var tbxNum = element.name.at(0);
+			var sum=0;
+
+			if(tbxNum>=0 && tbxNum<=6)
+			{
+				element.value = frequency[tbxNum-1]*tbxNum;
+			}
+			if(element.name == "kindtbx3" && frequency.includes(3))
+			{
+				if (frequency.includes(3) && !frequency.includes(4) && !frequency.includes(5)) 
+				{
+					for (var i = 0; i < 5; i++) 
+					{
+						sum += dice[i];
+					}
+					element.value = sum;
+				} 
+				else 
+				{
+					element.value = "";
+				}
+			}
+			if(element.name == "kindtbx4" && frequency.includes(4))
+			{
+				if (frequency.includes(4) && !frequency.includes(5)) 
+				{
+					for (var i = 0; i < 5; i++) 
+					{
+						sum += dice[i];
+					}
+					element.value = sum;
+				} 
+				else 
+				{
+					element.value = "";
+				}
+			}
+			if(element.name == "yahtzeetbx" && frequency.includes(5))
+			{
+				if (frequency.includes(5)) 
+				{
+					for (var i = 0; i < 5; i++) 
+					{
+						sum += dice[i];
+					}
+					element.value = sum;
+				} 
+				else 
+				{
+					element.value = "";
+				}
+			}
+			if(element.name === "totaltbx")
+			{
+				calculateTotalScore(element);
+			}
+			
+		}
+		
+		function calculateTotalScore(totalElement) {
+			var tbx1 = parseInt(document.getElementById("tbx1").value) || 0;
+			var tbx2 = parseInt(document.getElementById("tbx2").value) || 0;
+			var tbx3 = parseInt(document.getElementById("tbx3").value) || 0;
+			var tbx4 = parseInt(document.getElementById("tbx4").value) || 0;
+			var tbx5 = parseInt(document.getElementById("tbx5").value) || 0;
+			var tbx6 = parseInt(document.getElementById("tbx6").value) || 0;
+			var tbx3kind = parseInt(document.getElementById("tbx3kind").value) || 0;
+			var tbx4kind = parseInt(document.getElementById("tbx4kind").value) || 0;
+			var tbxyahtzee = parseInt(document.getElementById("tbxyahtzee").value) || 0;
+
+			var total = tbx1 + tbx2 + tbx3 + tbx4 + tbx5 + tbx6 + tbx3kind + tbx4kind + tbxyahtzee;
+			totalElement.value = total;
+		}
+		
+		function newGame() {
+			  dice = new Array(0, 0, 0, 0, 0);
+			  diceState = new Array(false, false, false, false, false);
+			  frequency = new Array(0, 0, 0, 0, 0, 0);
+			  rollCount = 0;
+			  
+			  for (var i = 0; i < 5; i++) {
+				var d = document.getElementById("dice" + i);
+				d.src = "pix/dice0.gif";
+			  }
+			  
+			  var allScores = document.querySelectorAll("input[type=text]");
+			  allScores.forEach(function (item) {
+				item.value = "";
+			  });
+        }
+		
+		
+	  
+	  </script>
+   </head>
+   <body>
+      <h1>Yahtzee</h1>
+      <div class="body">
+         <div name="dice" class="diceContainer">
+            <img id="dice0" src="pix/dice0.gif" class="diceImage" onclick="block(this)"> 
+            <img id="dice1" src="pix/dice0.gif" class="diceImage" onclick="block(this)"> 
+            <img id="dice2" src="pix/dice0.gif" class="diceImage" onclick="block(this)"> 
+            <img id="dice3" src="pix/dice0.gif" class="diceImage" onclick="block(this)"> 
+            <img id="dice4" src="pix/dice0.gif" class="diceImage" onclick="block(this)"> 
+         </div>
+         <table class="table">
+            <tr>
+               <td align="right">1's</td>
+               <td><input type="text" id="tbx1" name="1tbx" onMouseOver="score(this)"></td>
+            </tr>
+            <tr>
+               <td align="right">2's</td>
+               <td><input type="text" id="tbx2" name="2tbx" onMouseOver="score(this)"></td>
+               <td align="right" class="rollCol" rowspan="2"><button onClick="roll()" id="buttonRoll" class="rollButton" type="button" font-style>Roll</button></td>
+            </tr>
+            <tr>
+               <td align="right">3's</td>
+               <td><input type="text" id="tbx3" name="3tbx" onMouseOver="score(this)"></td>
+            </tr>
+            <tr>
+               <td align="right">4's</td>
+               <td><input type="text" id="tbx4" name="4tbx" onMouseOver="score(this)"></td>
+            </tr>
+            <tr>
+               <td align="right">5's</td>
+               <td><input type="text" id="tbx5" name="5tbx" onMouseOver="score(this)"></td>
+            </tr>
+            <tr>
+               <td align="right">6's</td>
+               <td><input type="text" id="tbx6" name="6tbx" onMouseOver="score(this)"></td>
+            </tr>
+            <tr>
+               <td align="right">3 of a kind</td>
+               <td><input type="text" id="tbx3kind" name="kindtbx3" onMouseOver="score(this)"></td>
+            </tr>
+            <tr>
+               <td align="right">4 of a kind</td>
+               <td><input type="text" id="tbx4kind" name="kindtbx4" onMouseOver="score(this)"></td>
+               <td align="right" class="newGameCol" rowspan="2"><button class="newGameButton" type="button" onClick="newGame()">New Game</button></td>
+            </tr>
+            <tr>
+               <td align="right">Yahtzee</td>
+               <td><input type="text" id="tbxyahtzee" name="yahtzeetbx" onMouseOver="score(this)"></td>
+            </tr>
+            <tr>
+               <td align="right">Total</td>
+               <td><input type="text" id="tbxtotal" name="totaltbx" onMouseOver="score(this)"></td>
+            </tr>
+         </table>
+      </div>
+   </body>
+</html>
